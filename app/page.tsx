@@ -1,13 +1,13 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "./components/Header";
 import BottomNav from "./components/BottomNav";
 import OrderCard from "./components/OrderCard";
-import { SearchIcon, ChevronRightIcon } from "./components/icons";
-import type { Order } from "./lib/orders";
-import { getOrder, getRecentOrders, isValidOrderInput } from "./lib/orders";
+import { SearchIcon, ChevronRightIcon } from "./icons";
+import type { Order } from "./status/orders";
+import {getOrder,getRecentOrders,isValidOrderInput,} from "./status/orders";
 
 export default function HomePage() {
   const router = useRouter();
@@ -15,8 +15,6 @@ export default function HomePage() {
   const [error, setError] = useState("");
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
 
-  // Order data lives in localStorage, so it's loaded after mount to avoid
-  // a server/client mismatch on first render.
   useEffect(() => {
     setRecentOrders(getRecentOrders(3));
   }, []);
@@ -25,18 +23,19 @@ export default function HomePage() {
     const value = orderNo.trim();
 
     if (!value) {
-      setError("กรุณากรอกหมายเลข Order");
+      setError("เธเธฃเธธเธ“เธฒเธเธฃเธญเธเธซเธกเธฒเธขเน€เธฅเธ Order");
       return;
     }
 
     if (!isValidOrderInput(value)) {
-      setError("รูปแบบไม่ถูกต้อง เช่น ORD - 28587965432159");
+      setError("เธฃเธนเธเนเธเธเนเธกเนเธ–เธนเธเธ•เนเธญเธ เน€เธเนเธ ORD - 28587965432159");
       return;
     }
 
     const found = getOrder(value);
+
     if (!found) {
-      setError("ไม่พบออเดอร์นี้ในระบบ กรุณาตรวจสอบหมายเลขอีกครั้ง");
+      setError("เนเธกเนเธเธเธญเธญเน€เธ”เธญเธฃเนเธเธตเนเนเธเธฃเธฐเธเธ เธเธฃเธธเธ“เธฒเธ•เธฃเธงเธเธชเธญเธเธซเธกเธฒเธขเน€เธฅเธเธญเธตเธเธเธฃเธฑเนเธ");
       return;
     }
 
@@ -48,16 +47,18 @@ export default function HomePage() {
       <Header />
 
       <section className="tracking-hero">
-        <h1>ติดตามออเดอร์ของคุณ</h1>
+        <h1>เธ•เธดเธ”เธ•เธฒเธกเธญเธญเน€เธ”เธญเธฃเนเธเธญเธเธเธธเธ“</h1>
+
         <p>
-          กรอกหมายเลขออเดอร์ เพื่อดูสถานะการจัดส่งของคุณได้ทันที
+          เธเธฃเธญเธเธซเธกเธฒเธขเน€เธฅเธเธญเธญเน€เธ”เธญเธฃเน เน€เธเธทเนเธญเธ”เธนเธชเธ–เธฒเธเธฐเธเธฒเธฃเธเธฑเธ”เธชเนเธเธเธญเธเธเธธเธ“เนเธ”เนเธ—เธฑเธเธ—เธต
         </p>
 
         <div className="search-field">
-          <label htmlFor="order">หมายเลข Order</label>
+          <label htmlFor="order">เธซเธกเธฒเธขเน€เธฅเธ Order</label>
 
           <div className="search-row">
             <SearchIcon className="search-icon" />
+
             <input
               id="order"
               value={orderNo}
@@ -66,16 +67,18 @@ export default function HomePage() {
                 setError("");
               }}
               onKeyDown={(e) => {
-                if (e.key === "Enter") handleSearch();
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
               }}
-              placeholder="เช่น ORD - 28587965432159"
+              placeholder="เน€เธเนเธ ORD - 28587965432159"
               autoComplete="off"
               inputMode="text"
             />
           </div>
 
           <p className="format-help">
-            พิมพ์เฉพาะตัวเลขก็ได้ ระบบจะจัดรูปแบบให้อัตโนมัติ
+            เธเธดเธกเธเนเน€เธเธเธฒเธฐเธ•เธฑเธงเน€เธฅเธเธเนเนเธ”เน เธฃเธฐเธเธเธเธฐเธเธฑเธ”เธฃเธนเธเนเธเธเนเธซเนเธญเธฑเธ•เนเธเธกเธฑเธ•เธด
           </p>
 
           {error && (
@@ -85,20 +88,25 @@ export default function HomePage() {
           )}
         </div>
 
-        <button type="button" className="primary-button" onClick={handleSearch}>
-          ค้นหา
+        <button
+          type="button"
+          className="primary-button"
+          onClick={handleSearch}
+        >
+          เธเนเธเธซเธฒ
         </button>
       </section>
 
       <section className="page-content">
         <div className="section-heading-row">
-          <h2>ออเดอร์ล่าสุด</h2>
+          <h2>เธญเธญเน€เธ”เธญเธฃเนเธฅเนเธฒเธชเธธเธ”</h2>
+
           <button
             type="button"
             className="see-all-link"
             onClick={() => router.push("/orders")}
           >
-            ดูทั้งหมด
+            เธ”เธนเธ—เธฑเนเธเธซเธกเธ”
             <ChevronRightIcon className="see-all-icon" />
           </button>
         </div>
@@ -114,3 +122,4 @@ export default function HomePage() {
     </main>
   );
 }
+

@@ -1,90 +1,37 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Header from "../components/Header";
-import BottomNav from "../components/BottomNav";
+import type { Order } from "../orders";
+import { formatThaiDate } from "../orders";
+import { OrderIcon } from "../icons";
+import StatusBadge from "../StatusBadge";
 
-export default function OrdersPage() {
+export default function OrderCard({ order }: { order: Order }) {
   const router = useRouter();
 
-  const orderNo = "ORD - 28587965432159";
+  const goToDetail = () => {
+    router.push(`/status?order=${encodeURIComponent(order.orderNo)}`);
+  };
 
   return (
-    <main className="app-shell">
-      <Header />
+    <button
+      type="button"
+      className="order-summary-card"
+      onClick={goToDetail}
+    >
+      <span className="order-summary-icon" aria-hidden="true">
+        <OrderIcon className="order-summary-icon-svg" />
+      </span>
 
-      <section className="page-content orders-page">
-        <div className="order-tabs">
-          <button type="button" className="order-tab active">
-            ออเดอร์ปัจจุบัน
-          </button>
+      <span className="order-summary-main">
+        <span className="order-summary-no">{order.orderNo}</span>
 
-          <button type="button" className="order-tab">
-            ออเดอร์ที่ผ่านมา
-          </button>
-        </div>
+        <span className="order-summary-date">
+          {formatThaiDate(order.createdAt)}
+        </span>
+      </span>
 
-        <div className="order-card">
-          <div className="order-number">รหัส Order : {orderNo}</div>
-
-          <button
-            type="button"
-            className="copy-button"
-            onClick={() => {
-              navigator.clipboard?.writeText(orderNo);
-            }}
-          >
-            Copy
-          </button>
-
-          <h2>สถานะ : รอชำระเงิน</h2>
-
-          <div className="product-row">
-            <span>xxxxxxx</span>
-            <strong>100</strong>
-            <span>▣</span>
-          </div>
-
-          <div className="product-row">
-            <span>xxxxxxx</span>
-            <strong>100</strong>
-            <span>▣</span>
-          </div>
-
-          <div className="product-row">
-            <span>xxxxxxx</span>
-            <strong>100</strong>
-            <span>▣</span>
-          </div>
-
-          <div className="product-row">
-            <span>xxxxxxx</span>
-            <strong>189</strong>
-            <span>▣</span>
-          </div>
-
-          <div className="total-row">
-            <strong>รวม</strong>
-            <strong>489 บาท</strong>
-          </div>
-
-          <p className="order-date">
-            วันที่และเวลาที่ทำรายการ 21/08/2026 : 15:42 น.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          className="red-button continue-button"
-          onClick={() =>
-            router.push(`/status?order=${encodeURIComponent(orderNo)}`)
-          }
-        >
-          ดำเนินการต่อไป
-        </button>
-      </section>
-
-      <BottomNav />
-    </main>
+      <StatusBadge status={order.status} />
+    </button>
   );
 }
