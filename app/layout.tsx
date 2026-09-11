@@ -1,8 +1,15 @@
 import type { Metadata } from "next";
+import { Prompt } from "next/font/google";
 import "./globals.css";
 
+const prompt = Prompt({
+  subsets: ["latin", "thai"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-prompt",
+});
+
 export const metadata: Metadata = {
-  title: "ติดตามออเดอร์",
+  title: "Order by Khanit",
   description: "ระบบติดตามออเดอร์",
 };
 
@@ -12,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th">
+    <html lang="th" className={prompt.variable}>
       <body>{children}</body>
     </html>
   );
