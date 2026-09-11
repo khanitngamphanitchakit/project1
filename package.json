@@ -3,14 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "prisma generate && next build",
-    "start": "next start",
-    "lint": "eslint",
-    "seed": "tsx prisma/seed.ts",
-    "db:view": "node scripts/db-view.mjs",
-    "db:admin": "npx @outerbase/studio dev.db --port 4000"
-  },
+  "dev": "next dev",
+  "build": "prisma generate && next build",
+  "start": "next start"
+},
   "dependencies": {
     "@base-ui/react": "^1.8.0",
     "@prisma/adapter-better-sqlite3": "^7.10.0",
