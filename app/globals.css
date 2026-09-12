@@ -351,8 +351,7 @@ a {
 
 .order-summary-card {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
   width: 100%;
   padding: 12px 14px;
   border: 1.5px solid var(--purple-300);
@@ -365,6 +364,34 @@ a {
 .order-summary-card:hover {
   border-color: var(--purple-600);
   box-shadow: var(--shadow-card);
+}
+
+/* ส่วนที่กดเข้าหน้ารายละเอียด */
+.order-summary-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding-bottom: 11px;
+  border-radius: var(--radius-sm);
+  color: inherit;
+}
+
+.order-summary-chevron {
+  width: 16px;
+  height: 16px;
+  color: var(--purple-400);
+  flex-shrink: 0;
+}
+
+/* แถวล่าง: สถานะ + ปุ่มคัดลอกเลขออเดอร์ */
+.order-summary-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--purple-200);
 }
 
 .order-summary-icon {
@@ -408,39 +435,110 @@ a {
 
 /* STATUS BADGE */
 
+/**
+ * 4 สถานะใช้คนละเฉดชัดเจน + ไอคอนคนละแบบ + จุดนำหน้า
+ * ไม่พึ่งสีอย่างเดียว เพื่อให้ยังแยกออกแม้พิมพ์ขาวดำหรือตาบอดสี
+ *   อยู่ในคิว      = เทาอมน้ำเงิน (รอ ยังไม่เริ่ม)
+ *   กำลังดำเนินการ = ม่วงแบรนด์ + จุดกะพริบ (กำลังทำอยู่)
+ *   รอชำระเงิน     = เหลืองอำพัน (ต้องลงมือ)
+ *   เสร็จสิ้น      = เขียว (จบแล้ว)
+ */
 .status-badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  height: 24px;
-  padding: 0 10px;
+  height: 26px;
+  padding: 0 11px;
   border-radius: var(--radius-pill);
   font-size: 10.5px;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
   flex-shrink: 0;
   color: #ffffff;
+  background: var(--status-color, var(--purple-700));
 }
 
 .status-badge-icon {
   width: 13px;
   height: 13px;
+  flex-shrink: 0;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* สถานะที่กำลังทำอยู่ ให้จุดกะพริบเพื่อสื่อว่า "ยังเดินอยู่" */
+.status-in_progress .status-dot {
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.72);
+  }
+}
+
+/* ขนาดใหญ่ ใช้เป็นหัวเรื่องสถานะในหน้ารายละเอียด */
+.status-badge.lg {
+  height: 36px;
+  padding: 0 16px;
+  font-size: 13.5px;
+  gap: 7px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.14);
+}
+
+.status-badge.lg .status-badge-icon {
+  width: 17px;
+  height: 17px;
+}
+
+.status-badge.lg .status-dot {
+  width: 7px;
+  height: 7px;
 }
 
 .status-queued {
-  background: var(--purple-900);
+  --status-color: #5b6478;
 }
 
 .status-in_progress {
-  background: var(--purple-700);
+  --status-color: var(--purple-600);
 }
 
 .status-awaiting_payment {
-  background: var(--amber-700);
+  --status-color: var(--amber-700);
 }
 
 .status-completed {
-  background: var(--green-600);
+  --status-color: var(--green-600);
+}
+
+/* หัวเรื่องสถานะบนหน้ารายละเอียด */
+
+.status-headline {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+  margin-bottom: 22px;
+}
+
+.status-headline-desc {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--grey-600);
 }
 
 /* EMPTY STATE (used on orders list and status page) */
@@ -973,10 +1071,14 @@ a {
 }
 
 .skeleton-badge {
-  width: 76px;
-  height: 24px;
+  width: 96px;
+  height: 26px;
   border-radius: var(--radius-pill);
   flex-shrink: 0;
+}
+
+.skeleton-badge.sm {
+  width: 72px;
 }
 
 .skeleton-circle {
@@ -1109,42 +1211,100 @@ a {
   margin-right: 7px;
 }
 
-/* FILTER CHIPS (หน้าออเดอร์ทั้งหมด) */
+/* TABS — ออเดอร์ปัจจุบัน / ออเดอร์ที่ผ่านมา */
 
-.filter-row {
-  display: flex;
+.tab-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-bottom: 16px;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  background: var(--purple-100);
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   gap: 7px;
-  margin-bottom: 14px;
-  padding-bottom: 4px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.filter-row::-webkit-scrollbar {
-  display: none;
-}
-
-.filter-chip {
-  flex-shrink: 0;
-  height: 30px;
-  padding: 0 14px;
-  border: 1.4px solid var(--purple-200);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
+  height: 40px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
   color: var(--purple-700);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
-  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+  transition: background 0.14s ease, color 0.14s ease, box-shadow 0.14s ease;
 }
 
-.filter-chip:hover {
-  border-color: var(--purple-600);
+.tab:hover {
+  background: rgb(255 255 255 / 0.55);
 }
 
-.filter-chip.active {
+.tab.active {
+  background: var(--surface);
+  color: var(--purple-800);
+  font-weight: 700;
+  box-shadow: var(--shadow-card);
+}
+
+.tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 21px;
+  height: 19px;
+  padding: 0 6px;
+  border-radius: var(--radius-pill);
+  background: var(--purple-200);
+  color: var(--purple-800);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.tab.active .tab-count {
   background: var(--purple-700);
-  border-color: var(--purple-700);
   color: #ffffff;
+}
+
+.skeleton-tab {
+  height: 48px;
+  border-radius: var(--radius-md);
+}
+
+.tab-row.is-skeleton {
+  background: transparent;
+  padding: 0;
+  gap: 8px;
+}
+
+/* สีวงกลมขั้นปัจจุบันใน StepTracker ให้ตรงกับสีสถานะ */
+
+.step-circle.current {
+  background: var(--status-color, var(--purple-800));
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--status-color, var(--purple-800)) 20%, transparent);
+}
+
+/* ปุ่มคัดลอกแบบย่อ (เฉพาะไอคอน) และตอนคัดลอกไม่สำเร็จ */
+
+.copy-pill.compact {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.copy-pill.compact .copy-pill-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.copy-pill.failed {
+  background: #fdecec;
+  color: #b3261e;
 }
 
 /* ================================================================

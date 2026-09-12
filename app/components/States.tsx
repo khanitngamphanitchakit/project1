@@ -10,12 +10,18 @@ export function OrderListSkeleton({ count = 3 }: { count?: number }) {
     <div className="order-list" aria-hidden="true">
       {Array.from({ length: count }, (_, i) => (
         <div className="order-summary-card is-skeleton" key={i}>
-          <span className="skeleton skeleton-icon" />
-          <span className="order-summary-main">
-            <span className="skeleton skeleton-line w-70" />
-            <span className="skeleton skeleton-line w-40" />
+          <span className="order-summary-link">
+            <span className="skeleton skeleton-icon" />
+            <span className="order-summary-main">
+              <span className="skeleton skeleton-line w-70" />
+              <span className="skeleton skeleton-line w-40" />
+            </span>
           </span>
-          <span className="skeleton skeleton-badge" />
+
+          <span className="order-summary-foot">
+            <span className="skeleton skeleton-badge" />
+            <span className="skeleton skeleton-badge sm" />
+          </span>
         </div>
       ))}
     </div>
