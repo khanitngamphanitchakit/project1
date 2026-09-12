@@ -222,7 +222,8 @@ export function formatThaiDate(iso: string): string {
 export function formatDateTimeShort(iso: string): string {
   const d = new Date(iso);
 
-  const date = new Intl.DateTimeFormat("th-TH", {
+  // th-TH ใช้ปฏิทินพุทธเป็นค่าเริ่มต้น จึงต้องระบุ gregory เพื่อให้ได้ปี ค.ศ.
+  const date = new Intl.DateTimeFormat("th-TH-u-ca-gregory", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
