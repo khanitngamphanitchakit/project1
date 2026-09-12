@@ -6,6 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
 import StepTracker from "../components/StepTracker";
+import StatusBadge from "../components/StatusBadge";
+import CopyButton from "../components/CopyButton";
 import {
   EmptyState,
   ErrorState,
@@ -13,12 +15,13 @@ import {
   OrderDetailSkeleton,
   OrderNotFound,
 } from "../components/States";
-import { ChevronLeftIcon, CopyIcon, OrderIcon, SearchIcon } from "../icons";
+import { ChevronLeftIcon, OrderIcon, SearchIcon } from "../icons";
 import type { Order } from "@/lib/orders";
 import {
   InvalidOrderInputError,
   NEXT_ACTION_LABEL,
   OrderNotFoundError,
+  STATUS_DESCRIPTION,
   STATUS_LABEL,
   advanceOrder,
   fetchOrder,
@@ -43,7 +46,6 @@ export default function StatusView() {
   const orderParam = searchParams.get("order") ?? "";
 
   const [state, setState] = useState<ViewState>({ kind: "loading" });
-  const [copied, setCopied] = useState(false);
   const [toast, setToast] = useState("");
 
   const load = useCallback(async () => {
@@ -80,17 +82,6 @@ export default function StatusView() {
 
   const order = state.kind === "ready" ? state.order : null;
   const total = useMemo(() => (order ? orderTotal(order) : 0), [order]);
-
-  const handleCopy = async () => {
-    if (!order) return;
-    try {
-      await navigator.clipboard.writeText(order.orderNo);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      setToast("คัดลอกไม่สำเร็จ กรุณาคัดลอกด้วยตนเอง");
-    }
-  };
 
   const handleAdvance = () => {
     if (!order) return;
@@ -172,6 +163,15 @@ export default function StatusView() {
                       {formatThaiTime(order.createdAt)}
                     </span>
                   </span>
+
+                  <CopyButton value={order.orderNo} compact />
+                </div>
+
+                <div className="status-headline">
+                  <StatusBadge status={order.status} size="lg" />
+                  <p className="status-headline-desc">
+                    {STATUS_DESCRIPTION[order.status]}
+                  </p>
                 </div>
 
                 <StepTracker status={order.status} />
@@ -183,16 +183,7 @@ export default function StatusView() {
 
                 <div className="detail-status-row">
                   <h2>สถานะ : {STATUS_LABEL[order.status]}</h2>
-
-                  <button
-                    type="button"
-                    className={copied ? "copy-pill copied" : "copy-pill"}
-                    onClick={handleCopy}
-                    aria-label="คัดลอกหมายเลขออเดอร์"
-                  >
-                    <CopyIcon className="copy-pill-icon" />
-                    {copied ? "คัดลอกแล้ว" : "คัดลอก"}
-                  </button>
+                  <CopyButton value={order.orderNo} />
                 </div>
 
                 <div className="product-list">

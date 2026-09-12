@@ -1,30 +1,24 @@
-import type { ComponentType } from "react";
 import type { OrderStatus } from "@/lib/orders";
 import { STATUS_LABEL } from "@/lib/orders";
-import {
-  CalendarClockIcon,
-  CheckIcon,
-  DownloadIcon,
-  ProcessingIcon,
-} from "../icons";
+import { STATUS_ICON } from "./status-icons";
 
-const STATUS_ICON: Record<
-  OrderStatus,
-  ComponentType<{ className?: string }>
-> = {
-  queued: DownloadIcon,
-  in_progress: ProcessingIcon,
-  awaiting_payment: CalendarClockIcon,
-  completed: CheckIcon,
-};
-
-export default function StatusBadge({ status }: { status: OrderStatus }) {
+export default function StatusBadge({
+  status,
+  size = "sm",
+}: {
+  status: OrderStatus;
+  /** lg = ใช้ในหน้ารายละเอียด, sm = ใช้ในการ์ดรายการ */
+  size?: "sm" | "lg";
+}) {
   const Icon = STATUS_ICON[status];
 
   return (
-    <span className={`status-badge status-${status}`}>
-      <span>{STATUS_LABEL[status]}</span>
+    <span
+      className={`status-badge status-${status}${size === "lg" ? " lg" : ""}`}
+    >
+      <span className="status-dot" aria-hidden="true" />
       <Icon className="status-badge-icon" />
+      <span className="status-badge-text">{STATUS_LABEL[status]}</span>
     </span>
   );
 }

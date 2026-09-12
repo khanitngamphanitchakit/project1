@@ -1,19 +1,6 @@
-import type { ComponentType } from "react";
 import type { OrderStatus } from "@/lib/orders";
 import { STATUS_LABEL, STEP_ORDER } from "@/lib/orders";
-import {
-  CalendarClockIcon,
-  CheckBoxIcon,
-  DownloadIcon,
-  ProcessingIcon,
-} from "../icons";
-
-const STEP_ICON: Record<OrderStatus, ComponentType<{ className?: string }>> = {
-  queued: DownloadIcon,
-  in_progress: ProcessingIcon,
-  awaiting_payment: CalendarClockIcon,
-  completed: CheckBoxIcon,
-};
+import { STATUS_ICON } from "./status-icons";
 
 export default function StepTracker({ status }: { status: OrderStatus }) {
   const currentIndex = STEP_ORDER.indexOf(status);
@@ -21,7 +8,7 @@ export default function StepTracker({ status }: { status: OrderStatus }) {
   return (
     <ol className="step-tracker" aria-label="สถานะการดำเนินการของออเดอร์">
       {STEP_ORDER.map((step, index) => {
-        const Icon = STEP_ICON[step];
+        const Icon = STATUS_ICON[step];
         const isDone = index < currentIndex;
         const isCurrent = index === currentIndex;
         const isUpcoming = index > currentIndex;
@@ -39,7 +26,7 @@ export default function StepTracker({ status }: { status: OrderStatus }) {
               className={
                 "step-circle" +
                 (isDone ? " done" : "") +
-                (isCurrent ? " current" : "") +
+                (isCurrent ? ` current status-${step}` : "") +
                 (isUpcoming ? " upcoming" : "")
               }
               aria-current={isCurrent ? "step" : undefined}

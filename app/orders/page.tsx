@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
@@ -11,22 +11,29 @@ import {
   LoadingAnnouncer,
   OrderListSkeleton,
 } from "../components/States";
-import { STATUS_LABEL, STEP_ORDER } from "@/lib/orders";
-import type { Order, OrderStatus } from "@/lib/orders";
-import { fetchAllOrders } from "@/lib/orders";
+import type { Order } from "@/lib/orders";
+import { fetchAllOrders, isActiveOrder } from "@/lib/orders";
 
-type Filter = OrderStatus | "all";
+type TabKey = "active" | "past";
 
-const FILTERS: { value: Filter; label: string }[] = [
-  { value: "all", label: "ทั้งหมด" },
-  ...STEP_ORDER.map((s) => ({ value: s as Filter, label: STATUS_LABEL[s] })),
+const TABS: { key: TabKey; label: string; hint: string }[] = [
+  {
+    key: "active",
+    label: "ออเดอร์ปัจจุบัน",
+    hint: "ออเดอร์ที่ยังอยู่ระหว่างดำเนินการ",
+  },
+  {
+    key: "past",
+    label: "ออเดอร์ที่ผ่านมา",
+    hint: "ออเดอร์ที่เสร็จสิ้นแล้ว",
+  },
 ];
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
-  const [filter, setFilter] = useState<Filter>("all");
+  const [tab, setTab] = useState<TabKey>("active");
 
   const load = useCallback(() => {
     setLoading(true);
@@ -42,15 +49,26 @@ export default function OrdersPage() {
     load();
   }, [load]);
 
-  const visible =
-    filter === "all" ? orders : orders.filter((o) => o.status === filter);
+  const { active, past } = useMemo(
+    () => ({
+      active: orders.filter(isActiveOrder),
+      past: orders.filter((o) => !isActiveOrder(o)),
+    }),
+    [orders]
+  );
+
+  const visible = tab === "active" ? active : past;
+  const counts: Record<TabKey, number> = {
+    active: active.length,
+    past: past.length,
+  };
 
   return (
     <div className="app-shell">
       <Header />
 
       <div className="page-heading-row">
-        <h1>ออเดอร์ทั้งหมด</h1>
+        <h1>รายการออเดอร์</h1>
       </div>
 
       <main className="app-main">
@@ -64,7 +82,11 @@ export default function OrdersPage() {
           ) : loading ? (
             <>
               <LoadingAnnouncer label="กำลังโหลดรายการออเดอร์" />
-              <OrderListSkeleton count={6} />
+              <div className="tab-row is-skeleton" aria-hidden="true">
+                <span className="skeleton skeleton-tab" />
+                <span className="skeleton skeleton-tab" />
+              </div>
+              <OrderListSkeleton count={5} />
             </>
           ) : orders.length === 0 ? (
             <EmptyState
@@ -78,47 +100,68 @@ export default function OrdersPage() {
             />
           ) : (
             <>
-              <div className="filter-row" role="group" aria-label="กรองตามสถานะ">
-                {FILTERS.map((f) => (
+              <div className="tab-row" role="tablist" aria-label="ประเภทออเดอร์">
+                {TABS.map((t) => (
                   <button
-                    key={f.value}
+                    key={t.key}
                     type="button"
-                    className={filter === f.value ? "filter-chip active" : "filter-chip"}
-                    onClick={() => setFilter(f.value)}
-                    aria-pressed={filter === f.value}
+                    role="tab"
+                    id={`tab-${t.key}`}
+                    aria-selected={tab === t.key}
+                    aria-controls={`panel-${t.key}`}
+                    className={tab === t.key ? "tab active" : "tab"}
+                    onClick={() => setTab(t.key)}
                   >
-                    {f.label}
+                    {t.label}
+                    <span className="tab-count">{counts[t.key]}</span>
                   </button>
                 ))}
               </div>
 
-              <p className="orders-count">
-                {filter === "all"
-                  ? `ทั้งหมด ${orders.length} รายการ`
-                  : `${STATUS_LABEL[filter]} ${visible.length} รายการ`}
-              </p>
+              <div
+                role="tabpanel"
+                id={`panel-${tab}`}
+                aria-labelledby={`tab-${tab}`}
+              >
+                {visible.length === 0 ? (
+                  <EmptyState
+                    title={
+                      tab === "active"
+                        ? "ไม่มีออเดอร์ที่กำลังดำเนินการ"
+                        : "ยังไม่มีออเดอร์ที่เสร็จสิ้น"
+                    }
+                    description={
+                      tab === "active"
+                        ? "ออเดอร์ของคุณเสร็จสิ้นทั้งหมดแล้ว ดูย้อนหลังได้ที่แท็บออเดอร์ที่ผ่านมา"
+                        : "เมื่อมีออเดอร์ที่ดำเนินการเสร็จ รายการจะย้ายมาแสดงที่นี่"
+                    }
+                    action={
+                      <button
+                        type="button"
+                        className="primary-button state-button"
+                        onClick={() => setTab(tab === "active" ? "past" : "active")}
+                      >
+                        {tab === "active"
+                          ? "ดูออเดอร์ที่ผ่านมา"
+                          : "ดูออเดอร์ปัจจุบัน"}
+                      </button>
+                    }
+                  />
+                ) : (
+                  <>
+                    <p className="orders-count">
+                      {TABS.find((t) => t.key === tab)?.hint} · {visible.length}{" "}
+                      รายการ
+                    </p>
 
-              {visible.length === 0 ? (
-                <EmptyState
-                  title={`ไม่มีออเดอร์สถานะ "${STATUS_LABEL[filter as OrderStatus]}"`}
-                  description="ลองเลือกสถานะอื่น เพื่อดูรายการที่มีอยู่"
-                  action={
-                    <button
-                      type="button"
-                      className="primary-button state-button"
-                      onClick={() => setFilter("all")}
-                    >
-                      ดูออเดอร์ทั้งหมด
-                    </button>
-                  }
-                />
-              ) : (
-                <div className="order-list">
-                  {visible.map((order) => (
-                    <OrderCard key={order.orderNo} order={order} />
-                  ))}
-                </div>
-              )}
+                    <div className="order-list">
+                      {visible.map((order) => (
+                        <OrderCard key={order.orderNo} order={order} />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
             </>
           )}
         </section>
