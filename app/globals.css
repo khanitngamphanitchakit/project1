@@ -103,11 +103,51 @@ a {
   text-decoration: none;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 /* เมนูบน — ใช้เฉพาะจอกว้าง (เปิดใน @media ด้านล่าง) */
 .top-nav {
   display: none;
   align-items: center;
   gap: 4px;
+}
+
+/* ปุ่มสลับมุมมอง — ซ่อนบนมือถือจริง เพราะไม่มีอะไรให้สลับ */
+.view-toggle {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1.5px solid var(--purple-300);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--purple-700);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.view-toggle:hover {
+  border-color: var(--purple-600);
+  background: var(--purple-050);
+}
+
+.view-toggle[aria-pressed="true"] {
+  border-color: var(--purple-700);
+  background: var(--purple-700);
+  color: #ffffff;
+}
+
+.view-toggle-icon {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
 }
 
 .top-nav-link {
@@ -1329,6 +1369,10 @@ a {
     display: flex;
   }
 
+  .view-toggle {
+    display: inline-flex;
+  }
+
   .bottom-nav {
     display: none;
   }
@@ -1473,11 +1517,121 @@ a {
   }
 }
 
+/* ================================================================
+ * บังคับมุมมองมือถือ — เปิดด้วยปุ่มสลับมุมมองบน header
+ *
+ * บล็อกนี้ต้องอยู่ "ท้ายไฟล์" และใช้ตัวเลือกที่เจาะจงกว่า (html[...])
+ * เพื่อให้ทับกฎใน @media (min-width: ...) ด้านบนได้ทั้งหมด
+ * ทุกค่าด้านล่างคือการดึงกลับไปเป็นค่ามือถือตั้งต้น
+ * ============================================================== */
+
+html[data-view="mobile"] .app-shell {
+  max-width: 430px;
+  padding-bottom: 84px;
+  box-shadow: var(--shadow-pop);
+}
+
+html[data-view="mobile"] .top-header {
+  padding: 22px 20px 14px;
+  border-bottom: 0;
+  margin-bottom: 0;
+}
+
+html[data-view="mobile"] .top-nav {
+  display: none;
+}
+
+html[data-view="mobile"] .bottom-nav {
+  display: grid;
+}
+
+/* ในกรอบ 430px ไม่มีที่พอสำหรับข้อความ เหลือแต่ไอคอนไว้กดกลับ */
+html[data-view="mobile"] .view-toggle-label {
+  display: none;
+}
+
+html[data-view="mobile"] .view-toggle {
+  padding: 0;
+  width: 36px;
+  justify-content: center;
+}
+
+html[data-view="mobile"] .page-heading-row {
+  padding: 0 20px 14px;
+}
+
+html[data-view="mobile"] .page-content {
+  padding: 4px 20px 28px;
+}
+
+html[data-view="mobile"] .page-heading-row h1 {
+  font-size: 18px;
+}
+
+/* เลิกจัดช่องค้นหาแบบ 2 คอลัมน์ กลับไปเรียงลงมาตามปกติ */
+html[data-view="mobile"] .tracking-hero {
+  display: block;
+  padding: 6px 20px 22px;
+}
+
+html[data-view="mobile"] .tracking-hero h1 {
+  font-size: 25px;
+}
+
+html[data-view="mobile"] .tracking-hero p {
+  font-size: 13px;
+}
+
+html[data-view="mobile"] .tracking-hero .primary-button {
+  width: 100%;
+  min-width: 0;
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+
+html[data-view="mobile"] .order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+html[data-view="mobile"] .status-detail-grid {
+  display: block;
+}
+
+html[data-view="mobile"] .step-label {
+  font-size: 9.5px;
+}
+
+html[data-view="mobile"] .step-circle {
+  width: 38px;
+  height: 38px;
+}
+
+html[data-view="mobile"] .step-circle.current {
+  width: 44px;
+  height: 44px;
+}
+
+html[data-view="mobile"] .step-icon {
+  width: 17px;
+  height: 17px;
+}
+
+html[data-view="mobile"] .state-block {
+  padding: 44px 24px;
+}
+
+html[data-view="mobile"] .toast {
+  bottom: 92px;
+}
+
 /* ผู้ใช้ที่ตั้งค่าลดการเคลื่อนไหว */
 
 @media (prefers-reduced-motion: reduce) {
   .skeleton,
-  .spinner {
+  .spinner,
+  .status-dot {
     animation: none;
   }
 

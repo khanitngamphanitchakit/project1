@@ -11,6 +11,5 @@ export interface NavItem {
 export const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "รายการออเดอร์", Icon: HomeIcon },
   { href: "/orders", label: "สถานะออเดอร์", Icon: ListIcon },
-  { href: "/status", label: "สถานะ", Icon: ClockIcon },
   { href: "/profile", label: "โปรไฟล์", Icon: UserIcon },
 ];

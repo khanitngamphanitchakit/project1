@@ -20,6 +20,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th" className={prompt.variable}>
+      <head>
+        {/*
+          กู้คืนมุมมองที่ผู้ใช้เลือก (เดสก์ท็อป/มือถือ) ก่อนเบราว์เซอร์วาดหน้าจอ
+          ถ้ารอ useEffect เลย์เอาต์จะกระพริบจากเดสก์ท็อปเป็นมือถือให้เห็น
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{document.documentElement.dataset.view=localStorage.getItem("khanit-view")==="mobile"?"mobile":"desktop"}catch(e){document.documentElement.dataset.view="desktop"}`,
+          }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

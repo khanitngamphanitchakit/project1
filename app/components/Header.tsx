@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoMark } from "../icons";
 import { NAV_ITEMS } from "./nav-items";
+import ViewToggle from "./ViewToggle";
 
 export default function Header() {
   const pathname = usePathname();
@@ -15,26 +16,30 @@ export default function Header() {
         <span className="logo-word">Order by Khanit</span>
       </Link>
 
-      {/* เมนูบนสำหรับจอกว้าง — บนมือถือซ่อนไว้ เพราะใช้แถบล่างแทน */}
-      <nav className="top-nav" aria-label="เมนูหลัก">
-        {NAV_ITEMS.map((item) => {
-          const isActive =
-            item.href === "/"
-              ? pathname === "/"
-              : pathname.startsWith(item.href);
+      <div className="header-right">
+        {/* เมนูบนสำหรับจอกว้าง — บนมือถือซ่อนไว้ เพราะใช้แถบล่างแทน */}
+        <nav className="top-nav" aria-label="เมนูหลัก">
+          {NAV_ITEMS.map((item) => {
+            const isActive =
+              item.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(item.href);
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={isActive ? "top-nav-link active" : "top-nav-link"}
-              aria-current={isActive ? "page" : undefined}
-            >
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={isActive ? "top-nav-link active" : "top-nav-link"}
+                aria-current={isActive ? "page" : undefined}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <ViewToggle />
+      </div>
     </header>
   );
 }

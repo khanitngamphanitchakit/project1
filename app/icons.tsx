@@ -163,6 +163,26 @@ export function CheckBoxIcon({ className }: { className?: string }) {
   );
 }
 
+export function PhoneIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+      <rect x="7" y="2.5" width="10" height="19" rx="2.4" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <line x1="10.6" y1="5.4" x2="13.4" y2="5.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="12" cy="18.4" r="1" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function MonitorIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+      <rect x="2.5" y="4" width="19" height="12.5" rx="2.2" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <line x1="9" y1="20" x2="15" y2="20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <line x1="12" y1="16.5" x2="12" y2="20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function BahtIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
